@@ -14,6 +14,7 @@ spring:
     import: "optional:configserver:"
   cloud:
     config:
+      enabled: false
       uri: http://localhost:8888
       request-connect-timeout: 5000 # 5s
       request-read-timeout: 5000 # 5s
@@ -100,6 +101,26 @@ resilience4j:
       default:
         timeoutDuration: 5s
 
-#logging:
-#  level:
-#    io.github.resilience4j: DEBUG
+logging:
+  group:
+    circuitbreaker: io.github.resilience4j, org.springframework.cloud.circuitbreaker
+  pattern:
+    level: "%5p [${spring.application.name},%X{trace_id},%X{span_id}]"
+
+info:
+  system: Polar Bookshop
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
+      probes:
+        enabled: true
+      group:
+        readiness:
+          include: readinessState,redis
